@@ -152,6 +152,8 @@ private:
 	/// BFS
 	p2Queue<iPoint>		frontier;
 	p2List<iPoint>		visited;
+	p2List<iPoint>		aniripsa;
+	bool				visit = true;
 };
 
 #endif // __j1MAP_H__

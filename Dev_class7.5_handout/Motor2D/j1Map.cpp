@@ -39,13 +39,58 @@ void j1Map::PropagateBFS()
 {
 	// TODO 1: If frontier queue contains elements
 	// pop the last one and calculate its 4 neighbors
-	if (frontier.Count() > 0)
+	iPoint test[4] = { { -1,-1 },{ -1,-1 } ,{ -1,-1 } ,{ -1,-1 } };
+
+	if (frontier.start != NULL)
 	{
-		p2Queue_item<iPoint>* item = frontier.GetLast();
+		iPoint last = frontier.start->data;
+		aniripsa.add(last);
+		frontier.Pop(frontier.start->data);
+
+		if (IsWalkable(last.x + 1, last.y))
+		{
+			test[0] = { last.x + 1, last.y };
+		}
+		if (IsWalkable(last.x - 1, last.y))
+		{
+			test[1] = { last.x - 1, last.y };
+		}
+		if (IsWalkable(last.x, last.y + 1))
+		{
+			test[2] = { last.x, last.y + 1 };
+		}
+		if (IsWalkable(last.x, last.y - 1))
+		{
+			test[3] = { last.x, last.y - 1 };
+		}
+	}
+	else
+	{
+		visit = false;
+		if (aniripsa.end != NULL)
+		{
+			if (aniripsa.end->data == iPoint(19, 4))
+			{
+				visit = true;
+				ResetBFS();
+			}
+			aniripsa.del(aniripsa.end);
+		}
 	}
 
 	// TODO 2: For each neighbor, if not visited, add it
 	// to the frontier queue and visited list
+	for (int i = 0; i < 4; i++)
+	{
+		if (test[i] != iPoint(-1, -1))
+		{
+			if (visited.find(test[i]) == -1)
+			{
+				visited.add(test[i]);
+				frontier.Push(test[i]);
+			}
+		}
+	}
 }
 
 void j1Map::DrawBFS()
@@ -86,7 +131,14 @@ bool j1Map::IsWalkable(int x, int y) const
 {
 	// TODO 3: return true only if x and y are within map limits
 	// and the tile is walkable (tile id 0 in the navigation layer)
-	return true;
+	p2List_item<MapLayer*>* nav = data.layers.start;
+	nav = nav->next;
+
+	if (nav->data->Get(x, y) == 0)
+	{
+		return (x < data.width && x >= 0 && y < data.height && y > 0);
+	}
+	return false;
 }
 
 void j1Map::Draw()
